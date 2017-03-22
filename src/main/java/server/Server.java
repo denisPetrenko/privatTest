@@ -14,19 +14,6 @@ public class Server {
     static File storage;
     public static void main(String[] args) {
         storage=new File(path);
-
-        try {
-            //add("Privat","Ukraine","type","Paul",78965444,1000000.4,6,8);
-            //getAll();
-           System.out.println(getDepositById(789654));
-            //System.out.println(getDepositsByDepositor("Paul"));
-           //delete(78965444);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     public static String add(String bankName, String country, String type, String depositor, int accountID, double amountOnDeposit, int profitability, int timeConstraints) throws IOException {
@@ -36,14 +23,15 @@ public class Server {
         mapper.writeValue(new File(path+accountID+".json"),deposit);
         return null;
     }
-    public static String getAll() throws IOException {
+    public static List<Deposit> getAll() throws IOException {
         Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
         ObjectMapper mapper = new ObjectMapper();
+        List<Deposit> depositList = new ArrayList<>();
         for (File f:files) {
             Deposit d = mapper.readValue(f,Deposit.class);
-            System.out.println(d.toString());
+            depositList.add(d);
         }
-        return null;
+        return depositList;
     }
 
     public static String getDepositById(int id) throws IOException {
