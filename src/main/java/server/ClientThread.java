@@ -1,11 +1,9 @@
 package server;
 
-
 import protocol.CustomRequest;
 import protocol.CustomResponse;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 
 public class ClientThread implements Runnable {
@@ -24,7 +22,7 @@ public class ClientThread implements Runnable {
             ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
             while (true) {
                 CustomRequest request = (CustomRequest) inputStream.readObject();
-                CustomResponse response = new CustomResponse(new Controller().execute(request));
+                CustomResponse response = new CustomResponse(execute(request));
                 outputStream.writeObject(response);
             }
         }catch (EOFException e){
@@ -34,10 +32,7 @@ public class ClientThread implements Runnable {
         }
 
     }
-
-    private static class Controller{
-
-        Object execute(CustomRequest request) throws IOException {
+        private Object execute(CustomRequest request) throws IOException {
             switch (request.getCommand()) {
                 case "list":return Dao.getAll();
                 case "info_depositor": return Dao.getDepositsByDepositor(request.getDeposit().getDepositor());
@@ -45,10 +40,12 @@ public class ClientThread implements Runnable {
                 case "info_id": return Dao.getDepositById(request.getDeposit().getAccountID());
                 case "info_type":return Dao.getDepositsByType(request.getDeposit().getType());
                 case "insert":return Dao.insert(request.getDeposit());
+                case "sum":return Dao.sum();
+                case "count":return Dao.count();
                 case "delete":return Dao.delete(request.getDeposit().getAccountID());
             }
             return null;
         }
 
-    }
+
 }

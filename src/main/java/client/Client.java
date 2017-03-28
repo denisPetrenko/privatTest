@@ -24,15 +24,16 @@ public class Client {
         inputStream = new ObjectInputStream(socket.getInputStream());
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter help to get a list of commands");
         while (true){
             String command;
             String data = "";
             System.out.print("command:");
             command = scanner.next();
-            if (!command.equals("sum")&&!command.equals("list")&&!command.equals("count")) {
+            if (!command.equals("sum")&&!command.equals("list")&&!command.equals("count")&&!command.equals("help")) {
                 if (command.equals("exit"))System.exit(1);
                 if (command.equals("add")){
-                    insert(buildDeposit(scanner));
+                    insertRequest(buildDeposit(scanner));
                     continue;
                 }else {
                     System.out.print("data:");
@@ -41,6 +42,7 @@ public class Client {
             }
             System.out.println("\nresults:");
             execute(command,data);
+            System.out.println();
         }
     }
     private static boolean execute(String command, String data) throws IOException, ClassNotFoundException {
@@ -52,37 +54,25 @@ public class Client {
             case "info_account": infoByIDRequest(data); break;
             case "info_bank":infoByBankRequest(data);break;
             case "info_type":infoByTypeRequest(data);break;
+            case "sum":sumRequest();break;
+            case "count":countRequest();break;
+            case "help":helpPrint();break;
             default:
                 System.out.println("bad command");
         }
         return true;
     }
 
-    private static void deleteRequest(String data) throws IOException, ClassNotFoundException {
-        Deposit deposit = new Deposit();
-        deposit.setAccountID(Integer.parseInt(data));
-        outputStream.writeObject(new CustomRequest(deposit,"delete"));
-
-        CustomResponse response = (CustomResponse) inputStream.readObject();
-        boolean status = (boolean)response.getData();
-        if (status){
-            System.out.println("Delete is successful!");
-        }else {
-            System.out.println("Delete is unsuccessful!");
-        }
+    private static void getAllRequest() throws IOException, ClassNotFoundException {
+        outputStream.writeObject(new CustomRequest(null,"list"));
+        listResponse();
     }
 
     private static void infoByTypeRequest(String data) throws IOException, ClassNotFoundException {
         Deposit deposit = new Deposit();
         deposit.setType(data);
-        outputStream.writeObject(new CustomRequest(deposit,"info_depositor"));
+        outputStream.writeObject(new CustomRequest(deposit,"info_type"));
         listResponse();
-    }
-
-    private static void getAllRequest() throws IOException, ClassNotFoundException {
-        outputStream.writeObject(new CustomRequest(null,"list"));
-        listResponse();
-
     }
 
     private static void infoByDepositorRequest(String data) throws IOException, ClassNotFoundException {
@@ -91,6 +81,7 @@ public class Client {
         outputStream.writeObject(new CustomRequest(deposit,"info_depositor"));
         listResponse();
     }
+
     private static void infoByBankRequest(String data) throws IOException, ClassNotFoundException {
         Deposit deposit = new Deposit();
         deposit.setBankName(data);
@@ -111,7 +102,7 @@ public class Client {
         }
 
     }
-    private static void insert(Deposit deposit) throws IOException, ClassNotFoundException {
+    private static void insertRequest(Deposit deposit) throws IOException, ClassNotFoundException {
         outputStream.writeObject(new CustomRequest(deposit,"insert"));
         CustomResponse response = (CustomResponse) inputStream.readObject();
         boolean status = (boolean) response.getData();
@@ -122,6 +113,31 @@ public class Client {
         }
     }
 
+    private static void deleteRequest(String data) throws IOException, ClassNotFoundException {
+        Deposit deposit = new Deposit();
+        deposit.setAccountID(Integer.parseInt(data));
+        outputStream.writeObject(new CustomRequest(deposit,"delete"));
+        CustomResponse response = (CustomResponse) inputStream.readObject();
+        boolean status = (boolean)response.getData();
+        if (status){
+            System.out.println("Delete is successful!");
+        }else {
+            System.out.println("Delete is unsuccessful!");
+        }
+    }
+    private static void sumRequest() throws IOException, ClassNotFoundException {
+        outputStream.writeObject(new CustomRequest(null,"sum"));
+        CustomResponse response = (CustomResponse) inputStream.readObject();
+        double sum = (double) response.getData();
+        System.out.println("Total: "+sum);
+    }
+    private static void countRequest() throws IOException, ClassNotFoundException {
+        outputStream.writeObject(new CustomRequest(null,"count"));
+        CustomResponse response = (CustomResponse) inputStream.readObject();
+        int count = (int) response.getData();
+        System.out.println("Count of deposits: "+count);
+    }
+
 
     private static void listResponse() throws IOException, ClassNotFoundException {
         CustomResponse customResponse = (CustomResponse) inputStream.readObject();
@@ -129,6 +145,19 @@ public class Client {
         for (Deposit d:depositList) {
             System.out.println(d.toString());
         }
+    }
+    private static void helpPrint(){
+        System.out.println("Commands:");
+        System.out.println("   list: all deposits list;");
+        System.out.println("   info_account: get deposit by account id; ");
+        System.out.println("   info_depositor: get deposit list by depositor name; ");
+        System.out.println("   info_type: get deposit list by type; ");
+        System.out.println("   info_bank: get deposit  list by bank; ");
+        System.out.println("   add: add new deposit");
+        System.out.println("   delete: delete deposit by id");
+        System.out.println("   sum: total amount of deposits");
+        System.out.println("   count: count of deposits");
+        System.out.println("   exit: exit");
     }
 
     private static Deposit buildDeposit(Scanner scanner){
