@@ -1,93 +1,51 @@
 package server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import model.Deposit;
+import protocol.CustomRequest;
+import protocol.CustomResponse;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
 
-    static String path = "storage/";
-    static File storage;
-    public static void main(String[] args) {
-        storage=new File(path);
-    }
 
-    public static String add(String bankName, String country, String type, String depositor, int accountID, double amountOnDeposit, int profitability, int timeConstraints) throws IOException {
-        Deposit deposit = new Deposit(bankName, country, type, depositor, accountID, amountOnDeposit,
-                profitability, timeConstraints);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(new File(path+accountID+".json"),deposit);
-        return null;
-    }
-    public static List<Deposit> getAll() throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            depositList.add(d);
-        }
-        return depositList;
-    }
+    public static void main(String[] args) throws IOException {
+        try(
+                ServerSocket socket = new ServerSocket(4444);
+                Socket clientSocket = socket.accept();
+                ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+                ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream())){
 
-    public static String getDepositById(int id) throws IOException {
-        File file = new File(path+id+".json");
-        ObjectMapper mapper = new ObjectMapper();
-        if (file.exists()){
-           return mapper.readValue(file,Deposit.class).toString();
-        }
-        return null;
-    }
-    public static List<Deposit> getDepositsByDepositor(String depositor) throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            if(Objects.equals(d.getDepositor(), depositor)){
-                depositList.add(d);
+            while (true) {
+                CustomRequest request = (CustomRequest) inputStream.readObject();
+                CustomResponse response = new CustomResponse(new Controller().execute(request));
+                outputStream.writeObject(response);
             }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return depositList;
     }
-    public static List<Deposit> getDepositsByType(String type) throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            if(Objects.equals(d.getType(), type)){
-                depositList.add(d);
+
+    private static class Controller{
+
+        Object execute(CustomRequest request) throws IOException {
+            switch (request.getCommand()) {
+                case "list":return Dao.getAll();
+                case "info_depositor": return Dao.getDepositsByDepositor(request.getDeposit().getDepositor());
+                case "info_bank":return Dao.getDepositsByBank(request.getDeposit().getBankName());
+                case "info_id": return Dao.getDepositById(request.getDeposit().getAccountID());
+                case "info_type":return Dao.getDepositsByType(request.getDeposit().getType());
+                case "insert":return Dao.insert(request.getDeposit());
+                case "delete":return Dao.delete(request.getDeposit().getAccountID());
+
             }
+            return null;
         }
-        return depositList;
+
     }
-    public static List<Deposit> getDepositsByBank(String bank) throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            if(Objects.equals(d.getBankName(), bank)){
-                depositList.add(d);
-            }
-        }
-        return depositList;
-    }
-
-    public static void delete(int id){
-        File file=new File(path+id+".json");
-        file.delete();
-    }
-
-
-
-
-
 
 
 }

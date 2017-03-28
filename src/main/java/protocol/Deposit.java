@@ -1,6 +1,8 @@
-package model;
+package protocol;
 
-public class Deposit {
+import java.io.Serializable;
+
+public class Deposit implements Serializable {
 
     public Deposit() {
     }
