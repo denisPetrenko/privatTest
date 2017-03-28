@@ -5,12 +5,12 @@ Start Client: java Client <host> <port number>;
 
 Start Server: java Server <port number>; or java Server <port number> <storage path>+</>;
 
-IMPORTANT
+IMPORTANT:
 
-PACKAGE protocol must be on the client and on the server;
+package protocol must be on the client and on the server;
 
 
-Instruction
+Instructions:
 
 1)Enter command.
 
@@ -30,6 +30,7 @@ Commands:
    sum: total amount of deposits
    count: count of deposits
    exit: exit
+
 
 Author: Petrenko Denis
 Email: quzya11@gmail.com
