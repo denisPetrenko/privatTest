@@ -31,7 +31,7 @@ package protocol must be on the client and on the server;
    * exit: exit
 
 
-Author: Petrenko Denis
-Email: quzya11@gmail.com
-tel: +38 095 549 18 67
+#Author: Petrenko Denis
+#Email: quzya11@gmail.com
+#tel: +38 095 549 18 67
 
