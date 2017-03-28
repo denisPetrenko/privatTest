@@ -2,15 +2,21 @@
 Test task for courses.
 
 Start Client: java Client <host> <port number>;
-Start Server: java Server <port number>; or java server <port number> <storage path>+</>;
+
+Start Server: java Server <port number>; or java Server <port number> <storage path>+</>;
 
 IMPORTANT
+
 PACKAGE protocol must be on the client and on the server;
+
 
 Instruction
 1)Enter command.
+
 2)Enter the data, if required, for example id or depositor name.
+
 3)After receiving the result, you can enter the command again;
+
 
 Commands:
    list: all deposits list;
