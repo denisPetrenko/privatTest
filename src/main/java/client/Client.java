@@ -16,7 +16,11 @@ public class Client {
     private static ObjectOutputStream outputStream;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        Socket socket = new Socket("localhost",4444);
+        if (args.length != 2) {
+            System.err.println("Usage: java Client <host> <port number>");
+            System.exit(1);
+        }
+        Socket socket = new Socket(args[0], Integer.parseInt(args[1]));
         inputStream = new ObjectInputStream(socket.getInputStream());
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         Scanner scanner = new Scanner(System.in);
@@ -26,6 +30,7 @@ public class Client {
             System.out.print("command:");
             command = scanner.next();
             if (!command.equals("sum")&&!command.equals("list")&&!command.equals("count")) {
+                if (command.equals("exit"))System.exit(1);
                 if (command.equals("add")){
                     insert(buildDeposit(scanner));
                     continue;
