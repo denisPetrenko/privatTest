@@ -10,28 +10,25 @@ import java.util.stream.Collectors;
 
 public class Dao {
 
-    static String path = "storage/";
-    static File storage = new File(path);
+    private static String path = "storage/";
 
+    private static File storage = new File(path);
 
-    public static boolean insert(Deposit deposit) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        File file = new File(path+deposit.getAccountID()+".json");
-        if (!file.exists()) {
-            mapper.writeValue(new File(path + deposit.getAccountID() + ".json"), deposit);
-            return true;
-        }else return false;
-    }
     public static List<Deposit> getAll() throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            depositList.add(d);
+        try {
+            Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
+            ObjectMapper mapper = new ObjectMapper();
+            List<Deposit> depositList = new ArrayList<>();
+            for (File f : files) {
+                Deposit d = mapper.readValue(f, Deposit.class);
+                depositList.add(d);
+            }
+            return depositList;
+        }catch (NullPointerException e){
+            return Collections.EMPTY_LIST;
         }
-        return depositList;
     }
+
 
     public static Deposit getDepositById(int id) throws IOException {
         File file = new File(path+id+".json");
@@ -42,40 +39,61 @@ public class Dao {
         return null;
     }
     public static List<Deposit> getDepositsByDepositor(String depositor) throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            if(Objects.equals(d.getDepositor(), depositor)){
-                depositList.add(d);
+        try {
+            Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
+            ObjectMapper mapper = new ObjectMapper();
+            List<Deposit> depositList = new ArrayList<>();
+            for (File f : files) {
+                Deposit d = mapper.readValue(f, Deposit.class);
+                if (Objects.equals(d.getDepositor(), depositor)) {
+                    depositList.add(d);
+                }
             }
+            return depositList;
+        }catch (NullPointerException e){
+            return Collections.EMPTY_LIST;
         }
-        return depositList;
     }
+
     public static List<Deposit> getDepositsByType(String type) throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            if(Objects.equals(d.getType(), type)){
-                depositList.add(d);
+        try {
+            Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
+            ObjectMapper mapper = new ObjectMapper();
+            List<Deposit> depositList = new ArrayList<>();
+            for (File f : files) {
+                Deposit d = mapper.readValue(f, Deposit.class);
+                if (Objects.equals(d.getType(), type)) {
+                    depositList.add(d);
+                }
             }
+            return depositList;
+        }catch (NullPointerException e){
+            return Collections.EMPTY_LIST;
         }
-        return depositList;
     }
     public static List<Deposit> getDepositsByBank(String bank) throws IOException {
-        Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
-        ObjectMapper mapper = new ObjectMapper();
-        List<Deposit> depositList = new ArrayList<>();
-        for (File f:files) {
-            Deposit d = mapper.readValue(f,Deposit.class);
-            if(Objects.equals(d.getBankName(), bank)){
-                depositList.add(d);
+        try {
+            Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
+            ObjectMapper mapper = new ObjectMapper();
+            List<Deposit> depositList = new ArrayList<>();
+            for (File f : files) {
+                Deposit d = mapper.readValue(f, Deposit.class);
+                if (Objects.equals(d.getBankName(), bank)) {
+                    depositList.add(d);
+                }
             }
+            return depositList;
+        }catch (NullPointerException e){
+            return Collections.EMPTY_LIST;
         }
-        return depositList;
+    }
+    public static boolean insert(Deposit deposit) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new File(path+deposit.getAccountID()+".json");
+        if (!file.exists()) {
+            mapper.writeValue(new File(path + deposit.getAccountID() + ".json"), deposit);
+            return true;
+        }else return false;
     }
     public static double sum() throws IOException {
         double sum = 0;
@@ -85,14 +103,19 @@ public class Dao {
         }
         return sum;
     }
-
-    public  static int count(){
-        return storage.listFiles().length;
+    public  static int count() throws IOException {
+        return getAll().size();
     }
 
     public static boolean delete(int id){
         File file=new File(path+id+".json");
         return file.delete();
+    }
+
+    public static void setPath(String path) {
+        Dao.path = path;
+        storage = new File(path);
+        storage.mkdir();
     }
 
 

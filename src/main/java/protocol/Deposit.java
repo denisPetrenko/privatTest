@@ -30,16 +30,14 @@ public class Deposit implements Serializable {
 
     @Override
     public String toString() {
-        return "Deposit{" +
-                "BankName='" + BankName + "\'" +
-                ", Country='" + Country + '\'' +
-                ", Type='" + Type + '\'' +
-                ", Depositor='" + Depositor + '\'' +
-                ", AccountID=" + AccountID +
+        return  " AccountID=" + AccountID +
+                ", Depositor=" + Depositor +
+                ", BankName=" + BankName +
+                ", Country=" + Country +
+                ", Type=" + Type +
                 ", AmountOnDeposit=" + AmountOnDeposit +
                 ", Profitability=" + Profitability +
-                ", TimeConstraints=" + TimeConstraints +
-                '}';
+                ", TimeConstraints=" + TimeConstraints+";";
     }
 
     public String getBankName() {
