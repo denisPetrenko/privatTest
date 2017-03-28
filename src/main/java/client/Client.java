@@ -41,6 +41,7 @@ public class Client {
             }
             System.out.println("\nresults:");
             execute(command,data);
+            System.out.println();
         }
     }
     private static boolean execute(String command, String data) throws IOException, ClassNotFoundException {
@@ -52,10 +53,25 @@ public class Client {
             case "info_account": infoByIDRequest(data); break;
             case "info_bank":infoByBankRequest(data);break;
             case "info_type":infoByTypeRequest(data);break;
+            case "sum":sum();break;
+            case "count":count();break;
             default:
                 System.out.println("bad command");
         }
         return true;
+    }
+
+    private static void sum() throws IOException, ClassNotFoundException {
+        outputStream.writeObject(new CustomRequest(null,"sum"));
+        CustomResponse response = (CustomResponse) inputStream.readObject();
+        double sum = (double) response.getData();
+        System.out.println("Total: "+sum);
+    }
+    private static void count() throws IOException, ClassNotFoundException {
+        outputStream.writeObject(new CustomRequest(null,"count"));
+        CustomResponse response = (CustomResponse) inputStream.readObject();
+        int count = (int) response.getData();
+        System.out.println("Count of deposits: "+count);
     }
 
     private static void deleteRequest(String data) throws IOException, ClassNotFoundException {
@@ -72,17 +88,17 @@ public class Client {
         }
     }
 
-    private static void infoByTypeRequest(String data) throws IOException, ClassNotFoundException {
-        Deposit deposit = new Deposit();
-        deposit.setType(data);
-        outputStream.writeObject(new CustomRequest(deposit,"info_depositor"));
-        listResponse();
-    }
-
     private static void getAllRequest() throws IOException, ClassNotFoundException {
         outputStream.writeObject(new CustomRequest(null,"list"));
         listResponse();
 
+    }
+
+    private static void infoByTypeRequest(String data) throws IOException, ClassNotFoundException {
+        Deposit deposit = new Deposit();
+        deposit.setType(data);
+        outputStream.writeObject(new CustomRequest(deposit,"info_type"));
+        listResponse();
     }
 
     private static void infoByDepositorRequest(String data) throws IOException, ClassNotFoundException {

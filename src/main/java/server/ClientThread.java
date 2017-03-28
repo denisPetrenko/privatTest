@@ -45,6 +45,8 @@ public class ClientThread implements Runnable {
                 case "info_id": return Dao.getDepositById(request.getDeposit().getAccountID());
                 case "info_type":return Dao.getDepositsByType(request.getDeposit().getType());
                 case "insert":return Dao.insert(request.getDeposit());
+                case "sum":return Dao.sum();
+                case "count":return Dao.count();
                 case "delete":return Dao.delete(request.getDeposit().getAccountID());
             }
             return null;

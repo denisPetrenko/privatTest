@@ -77,6 +77,18 @@ public class Dao {
         }
         return depositList;
     }
+    public static double sum() throws IOException {
+        double sum = 0;
+        List<Deposit> depositList = getAll();
+        for (Deposit d: depositList){
+           sum+=d.getAmountOnDeposit();
+        }
+        return sum;
+    }
+
+    public  static int count(){
+        return storage.listFiles().length;
+    }
 
     public static boolean delete(int id){
         File file=new File(path+id+".json");
