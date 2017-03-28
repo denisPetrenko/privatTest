@@ -6,10 +6,10 @@
 
 # IMPORTANT:
 
->package protocol must be on the client and on the server;
+package protocol must be on the client and on the server;
 
 
-#Instructions:
+# Instructions:
 
 1. Enter command.
 
@@ -18,7 +18,7 @@
 3. After receiving the result, you can enter the command again;
 
 
-#Commands:
+# Commands:
    * list: all deposits list;
    * info_account: get deposit by account id;
    * info_depositor: get deposit list by depositor name;
