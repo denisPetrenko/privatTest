@@ -11,6 +11,7 @@ PACKAGE protocol must be on the client and on the server;
 
 
 Instruction
+
 1)Enter command.
 
 2)Enter the data, if required, for example id or depositor name.
