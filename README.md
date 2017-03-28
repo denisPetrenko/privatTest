@@ -1,8 +1,8 @@
 ## privatTest
 # Test task for courses.
 
-- Start Client: java Client <host> <port number>;
-- Start Server: java Server <port number>; or java Server <port number> <storage path>+</>;
+- Start Client: java Client <\host> <\port number>;
+- Start Server: java Server <\port number>; or java Server <\port number> <\storage path>+<\/>;
 
 # IMPORTANT:
 
