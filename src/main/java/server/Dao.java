@@ -14,6 +14,10 @@ public class Dao {
 
     private static File storage = new File(path);
 
+    static{
+        storage.mkdir();
+    }
+
     public static List<Deposit> getAll() throws IOException {
         try {
             Set<File> files = Arrays.stream(storage.listFiles()).collect(Collectors.toSet());
